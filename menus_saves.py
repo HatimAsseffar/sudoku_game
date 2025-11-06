@@ -22,7 +22,6 @@ class SaveSelectionWindow:
         btn_text = (f"Difficulty: {saved_data.get('difficulty')}\n"
                     f"Time: {time_str}\n"
                     f"Empty Cells: {empty_cells}")
-
         btn = tk.Button(
             container,
             text=btn_text,
@@ -45,7 +44,6 @@ class SaveSelectionWindow:
             difficulty=saved_data.get('difficulty'),
             loaded_data=saved_data
         )
-
 
 class MainMenu:
     def __init__(self, root, frame_bg, button_style, autosave_manager,
