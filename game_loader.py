@@ -1,4 +1,4 @@
-# game_loader.py
+                
 from adpt.game_state_loader_adapter import restore_from_payload
 
 class GameStateLoader:
