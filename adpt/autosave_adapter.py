@@ -2,7 +2,7 @@ import json
 import os
 from typing import Callable, Optional, Dict
 from pl.pl_autosave import deserialize, serialize
-#
+
 class AutosaveAdapter:
     def __init__(self, save_path: str = "sudoku_autosave.json"):
         self.save_path = save_path
