@@ -1,7 +1,5 @@
-# adpt/generator_adapter.py
 from typing import Dict, List
 from pl.pl_generator import SudokuGenerator
-
 
 class GeneratorAdapter:
     """
@@ -20,7 +18,6 @@ class GeneratorAdapter:
         Returns a canonical payload with 'puzzle' and 'solution' keys.
         """
         puzzle = self._gen.generate_puzzle(holes)
-        # generator keeps last solution in self._gen.solution
         solution = [row.copy() for row in (self._gen.solution or [[0]*9 for _ in range(9)])]
         return {
             'puzzle': [row.copy() for row in puzzle],
