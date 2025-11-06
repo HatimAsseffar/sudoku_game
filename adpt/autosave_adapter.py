@@ -1,8 +1,7 @@
-# adpt/autosave_adapter.py
 import json
 import os
 from typing import Callable, Optional, Dict
-from pl.pl_autosave import deserialize, serialize  # pl serializer/deserializer if present
+from pl.pl_autosave import deserialize, serialize                                         
 
 class AutosaveAdapter:
     def __init__(self, save_path: str = "sudoku_autosave.json"):
@@ -25,14 +24,11 @@ class AutosaveAdapter:
         try:
             with open(self.save_path, 'r') as f:
                 data = json.load(f)
-            # Delegate normalization to pl.pl_autosave.deserialize if available
             try:
-                normalized = deserialize(data)  # pl-level normalizer
+                normalized = deserialize(data)                       
                 return normalized
             except Exception:
-                # fallback normalization if pl.pl_autosave not available
                 if 'puzzle' in data:
-                    # ensure integers and cell_types
                     puzzle = []
                     for row in data['puzzle']:
                         new_row = []
