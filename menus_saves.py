@@ -13,7 +13,6 @@ class SaveSelectionWindow:
     def setup_ui(self, root, ui_builder, saved_data, start_game):
         container = tk.Frame(self.window, bg=self.styles['frame_bg'], padx=20, pady=20)
         container.pack(expand=True, fill=tk.BOTH)
-
         empty_cells = sum(row.count(0) for row in saved_data['puzzle'])
         total_seconds = saved_data.get('timer', 0)
         minutes, seconds = divmod(total_seconds, 60)

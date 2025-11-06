@@ -55,7 +55,6 @@ class MenuManager:
 
         controller_frame = tk.Frame(settings_window)
         controller_frame.pack(pady=10)
-
         current_mode = getattr(self.game, 'validation_adapter', None)
         mode = current_mode.mode if current_mode else 'v1'
         ValidationController(controller_frame, mode, game=self.game)
