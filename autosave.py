@@ -11,16 +11,16 @@ class AutosaveManager:
         self.game = game
 
     def save_game(self):
-        # Changed check from self.game.cells to self.game.ui_builder.cells
+                                                                          
         if not hasattr(self.game.ui_builder, 'cells') or not self.game.current_difficulty:
             return
 
         save_data = {
             'puzzle': self.get_current_puzzle_state(),
-            'hints_remaining': self.game.hint_manager.hints_remaining,  # Updated reference
+            'hints_remaining': self.game.hint_manager.hints_remaining,                     
             'timer': getattr(self.game.timer, 'elapsed_time', 0),
             'difficulty': self.game.current_difficulty,
-            'validation_mode': self.game.validation.mode,  # Updated reference
+            'validation_mode': self.game.validation.mode,                     
             'timestamp': datetime.now().isoformat(),
             'solution': self.game.generator.solution,
             'cell_types': self.get_cell_types()
@@ -36,7 +36,7 @@ class AutosaveManager:
         try:
             with open(self.SAVE_FILE, 'r') as f:
                 data = json.load(f)
-                # Convert puzzle cells to integers
+                                                  
                 if 'puzzle' in data:
                     converted_puzzle = []
                     for row in data['puzzle']:
@@ -47,7 +47,7 @@ class AutosaveManager:
                             converted_row.append(converted_cell)
                         converted_puzzle.append(converted_row)
                     data['puzzle'] = converted_puzzle
-                # Handle legacy saves without cell_types
+                                                        
                 if 'cell_types' not in data:
                     cell_types = []
                     for row in data['puzzle']:
@@ -68,11 +68,11 @@ class AutosaveManager:
 
     def get_current_puzzle_state(self):
         state = []
-        # Access through UI Builder instead of game.cells
+                                                         
         for row in range(9):
             current_row = []
             for col in range(9):
-                widget = self.game.ui_builder.cells[row][col]  # Updated
+                widget = self.game.ui_builder.cells[row][col]           
                 if isinstance(widget, tk.Entry):
                     value = widget.get().strip()
                     num = int(value) if value else 0
@@ -86,16 +86,16 @@ class AutosaveManager:
 
     def get_cell_types(self):
         cell_types = []
-        # Access through UI Builder
+                                   
         for row in range(9):
             current_row = []
             for col in range(9):
-                widget = self.game.ui_builder.cells[row][col]  # Updated
+                widget = self.game.ui_builder.cells[row][col]           
                 current_row.append('text' if isinstance(widget, tk.Entry) else 'label')
             cell_types.append(current_row)
         return cell_types
 
-    #---------- Time Management & Autosave ----------#
+                                                      
     def prompt_save_on_exit(self):
         """Prompt user to save current game before closing."""
         response = messagebox.askyesno(
@@ -105,6 +105,6 @@ class AutosaveManager:
         )
         if response:
             self.save_game()
-        # Close the game window afterwards
+                                          
         if hasattr(self.game, 'on_close'):
             self.game.on_close()
