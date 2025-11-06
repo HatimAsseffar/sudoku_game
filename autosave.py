@@ -95,7 +95,6 @@ class AutosaveManager:
             cell_types.append(current_row)
         return cell_types
 
-                                                      
     def prompt_save_on_exit(self):
         """Prompt user to save current game before closing."""
         response = messagebox.askyesno(
