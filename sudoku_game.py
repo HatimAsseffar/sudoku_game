@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 
-# Core and adapters (assumed present per refactor plan)
+                                                       
 from pl.pl_game import CoreGame
 from pl.pl_timer import GameTimer
 from adpt.generator_adapter import GeneratorAdapter
@@ -23,15 +23,15 @@ class SudokuGame:
     def __init__(self, root=None):
         self.root = root or tk.Tk()
 
-        # Core / adapters / state
+                                 
         self.generator_adapter = GeneratorAdapter()
-        self.core_game = None               # pl.CoreGame instance
-        self.game_timer = None              # pl.GameTimer instance
-        self.timer_adapter = None           # adpt.TimerAdapter instance
-        self.validation_adapter = None     # adpt.ValidationAdapter instance
-        self.hint_adapter = None           # adpt.HintAdapter instance
+        self.core_game = None                                     
+        self.game_timer = None                                     
+        self.timer_adapter = None                                       
+        self.validation_adapter = None                                      
+        self.hint_adapter = None                                      
         self.autosave_adapter = AutosaveAdapter()
-        # UI
+            
         self.styles = get_ui_styles(
             validate_callback=None,
             hint_callback=None,
@@ -41,7 +41,7 @@ class SudokuGame:
         )
         self.menu_manager = MenuManager(self, self.root, styles=self.styles)
         self.ui_builder = SudokuUIBuilder(self.root, self.styles, game=self)
-        # Rebind control callbacks to live methods (MenuManager and game)
+                                                                         
         try:
             self.ui_builder.rebind_control_callbacks(
                 new_game_callback=lambda: self.menu_manager.on_start_new_game(),
@@ -49,16 +49,16 @@ class SudokuGame:
                 hint_callback=lambda: self.give_hint()
             )
         except Exception:
-            # defensive: ignore if UI builder doesn't expose rebind (older versions)
+                                                                                    
             pass
-        # GUI state
+                   
         self.current_difficulty = None
         self.starting_new_game = False
 
-        # Window protocol
+                         
         self.root.protocol("WM_DELETE_WINDOW", self.on_close_with_save)
 
-    # ---------- Entry point ---------- #
+                                         
     def start(self):
         self.menu_manager.show_main_menu()
         if not self.root.winfo_viewable():
@@ -67,7 +67,7 @@ class SudokuGame:
     def show_difficulty_selector(self):
         self.menu_manager.show_difficulty_selector()
 
-    # ---------- High-level game lifecycle ---------- #
+                                                       
     def start_game(self, difficulty, loaded_data=None):
         """Begin a new game or restore a loaded one."""
         self.current_difficulty = difficulty
@@ -91,20 +91,20 @@ class SudokuGame:
         Initialize core_game, timer and adapters.
         If loaded_data is provided it is a normalized payload returned by AutosaveAdapter.load().
         """
-        # Reset UI builder cell state before building new UI
+                                                            
         self.ui_builder.cells = [[None for _ in range(9)] for _ in range(9)]
         self.ui_builder.current_entries = []
 
         if loaded_data:
-            # Use loader adapter to obtain normalized payload
+                                                             
             payload = restore_from_payload(loaded_data) if not loaded_data.get('core_game') else loaded_data
-            # payload expected canonical keys: puzzle, solution, hints_remaining, timer, difficulty, validation_mode, cell_types
+                                                                                                                                
             puzzle = payload['puzzle']
             solution = payload['solution']
 
-            # Construct core and timer from payload
+                                                   
             self.core_game = CoreGame(puzzle, solution)
-            # Restore hints_remaining into core_game if present
+                                                               
             if 'hints_remaining' in payload:
                 try:
                     self.core_game.hints_remaining = int(payload.get('hints_remaining', self.core_game.hints_remaining))
@@ -115,34 +115,34 @@ class SudokuGame:
             self.validation_mode_on_load = payload.get('validation_mode', 'v1')
             cell_types = payload.get('cell_types', None)
 
-            # Build UI and wire adapters
+                                        
             self.generate_game_ui(cell_types=cell_types, loaded_payload=payload)
-            # Auto-resume timer on load
+                                       
             if self.timer_adapter:
                 self.timer_adapter.start()
         else:
-            # New game: generate puzzle via generator adapter
+                                                             
             holes = self.DIFFICULTIES.get(self.current_difficulty, 25)
             payload = self.generator_adapter.generate(holes)
             puzzle = payload['puzzle']
             solution = payload['solution']
 
-            # Core and timer for new game
+                                         
             self.core_game = CoreGame(puzzle, solution)
             self.core_game.hints_remaining = 5
             self.game_timer = GameTimer(initial_seconds=0)
 
-            # Build UI and wire adapters
+                                        
             self.generate_game_ui(cell_types=None, loaded_payload=None)
-            # Start timer when user begins interacting or immediately if desired:
+                                                                                 
             self.timer_adapter.start()
 
     def update_hint_button(self):
         """If a hint adapter exists and a hint button is present, ensure the button text/state is correct."""
         if self.hint_adapter and hasattr(self.hint_adapter, 'button') and self.hint_adapter.button:
-            self.hint_adapter._update_button()  # adapter uses internal method to sync label/state
+            self.hint_adapter._update_button()                                                    
 
-    # ---------- UI creation and adapter wiring ---------- #
+                                                            
     def generate_game_ui(self, cell_types=None, loaded_payload=None):
         """
         Build the UI from self.core_game state and wire adapters.
@@ -152,20 +152,20 @@ class SudokuGame:
         puzzle = [row.copy() for row in self.core_game.board.puzzle] if hasattr(self.core_game, 'board') else self.core_game.to_dict()['puzzle']
         solution = [row.copy() for row in self.core_game.board.solution] if hasattr(self.core_game, 'board') else self.core_game.to_dict()['solution']
 
-        # Build UI grid and control buttons. UI returns hint_button and main_frame for timer placement
+                                                                                                      
         hint_button, main_frame = self.ui_builder.create_game_ui(puzzle, solution, cell_types)
 
-        # Create and wire hint adapter
+                                      
         self.hint_adapter = HintAdapter(self.core_game, self.ui_builder)
         self.hint_adapter.set_button(hint_button)
 
-        # Create validation adapter and register it as input handler
+                                                                    
         self.validation_adapter = ValidationAdapter(self.core_game, self.ui_builder, initial_mode=getattr(self, 'validation_mode_on_load', 'v1'))
         self.ui_builder.register_input_handler(self._wrap_validation_handler())
 
-        # Create timer adapter but do not auto-start here (start is called by caller when appropriate)
+                                                                                                      
         self.timer_adapter = TimerAdapter(self.root, self.game_timer)
-        # Add timer label to UI using timer_adapter.time_var
+                                                            
         self.ui_builder.add_timer_label(main_frame, self.timer_adapter)
 
         self.ui_builder.rebind_control_callbacks(
@@ -174,8 +174,8 @@ class SudokuGame:
             hint_callback=self.give_hint
         )
 
-        # Ensure autosave adapter reference exists (created in __init__)
-        # No automatic save here; autosave invoked by explicit calls
+                                                                        
+                                                                    
 
     def _wrap_validation_handler(self):
         """Return a callable matching UI handler signature (row, col, text) that forwards to validation adapter."""
@@ -183,28 +183,28 @@ class SudokuGame:
             if not self.validation_adapter:
                 return True
             result = self.validation_adapter.handle_input(row, col, text)
-            # After a successful input update, check for victory using core_game API
+                                                                                    
             try:
                 if self.core_game.is_complete():
-                    # double-check correctness across cells using core_game.is_correct
+                                                                                      
                     if all(self.core_game.is_correct(r, c) for r in range(9) for c in range(9)):
-                        # stop timer and show victory
+                                                     
                         if self.timer_adapter:
                             self.timer_adapter.stop()
                         show_victory(self.root)
             except Exception:
-                # If core_game lacks expected methods, ignore error (defensive)
+                                                                               
                 pass
             return result
         return handler
 
-    # ---------- Hint / validation helpers (thin GUI forwards) ---------- #
+                                                                           
     def give_hint(self):
         if self.hint_adapter:
             self.hint_adapter.on_request_hint()
             self.update_hint_button()
 
-    # ---------- Autosave integration ---------- #
+                                                  
     def save_game(self):
         """Explicit save using adapters: delegate to AutosaveAdapter."""
         try:
@@ -223,7 +223,7 @@ class SudokuGame:
         """Load normalized payload from autosave adapter and return it (GUI caller will restore)."""
         return self.autosave_adapter.load()
 
-    # ---------- Victory check (kept for compatibility) ---------- #
+                                                                    
     def check_victory(self):
         if not self.core_game:
             return
@@ -232,7 +232,7 @@ class SudokuGame:
                 self.timer_adapter.stop()
             show_victory(self.root)
 
-    # ---------- New game prompt ---------- #
+                                             
     def prompt_new_game(self):
         response = messagebox.askyesno("New Game", "Would you like to change difficulty?", icon='question')
         if response:
@@ -242,11 +242,11 @@ class SudokuGame:
                 self.starting_new_game = True
                 self.start_game(self.current_difficulty)
 
-    # ---------- Settings UI ---------- #
+                                         
     def show_settings_window(self):
         self.menu_manager.show_settings_window()
 
-    # ---------- Exit handling ---------- #
+                                           
     def on_close(self):
         """Clean exit without redundant prompts."""
         try:
