@@ -111,7 +111,7 @@ class SudokuUIBuilder:
             entry.expected = solution[row][col]
             entry.row, entry.col = row, col
 
-            # Bind to registered input handler (if present)
+                                                           
             def on_release(e, r=row, c=col, w=entry):
                 if self._input_handler:
                     self._input_handler(r, c, w.get().strip())
@@ -145,7 +145,7 @@ class SudokuUIBuilder:
     def validate_digit(self, proposed):
         return proposed == "" or (len(proposed) == 1 and proposed in "123456789")
 
-    # ---------- Adapter-facing API ---------- #
+                                                
     def get_widget(self, row, col):
         return self.cells[row][col]
 
@@ -195,7 +195,7 @@ class SudokuUIBuilder:
         Attach a handler used by all entry KeyRelease events.
         """
         self._input_handler = handler
-        # Rebind existing entries to use this handler
+                                                     
         for r in range(9):
             for c in range(9):
                 w = self.cells[r][c]
