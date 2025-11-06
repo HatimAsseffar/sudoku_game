@@ -86,7 +86,6 @@ class AutosaveManager:
 
     def get_cell_types(self):
         cell_types = []
-                                   
         for row in range(9):
             current_row = []
             for col in range(9):
