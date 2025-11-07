@@ -34,5 +34,5 @@ class ValidationController:
 
         if self.game and hasattr(self.game, 'validation_adapter'):
             self.game.validation_adapter.set_mode(mode)
-            # revalidate all cells
+                                  
             self.game.validation_adapter.revalidate_all()
