@@ -1,3 +1,4 @@
+# adpt/timer_adapter.py
 import tkinter as tk
 from pl.pl_timer import GameTimer
 
@@ -8,6 +9,8 @@ class TimerAdapter:
         self.update_interval = update_interval
         self.time_var = tk.StringVar()
         self._after_id = None
+
+        # initialize display from game_timer
         self._update_display()
 
     def _format(self, seconds: int) -> str:

@@ -1,3 +1,4 @@
+# adpt/hint_adapter.py
 import tkinter as tk
 from typing import Optional
 
@@ -6,6 +7,7 @@ class HintAdapter:
         self.core = core_game
         self.ui = ui_builder
         self.button: Optional[tk.Button] = None
+        # Register callback if core_game supports observers
         if hasattr(self.core, 'register_on_cell_changed'):
             self.core.register_on_cell_changed(self._on_core_change)
 
@@ -24,6 +26,7 @@ class HintAdapter:
 
     def on_request_hint(self):
         if not hasattr(self.core, 'request_hint'):
+            # core may implement request_hint differently
             empties = getattr(self.core, 'empty_cells', lambda: [])()
             if not empties:
                 return False
@@ -36,10 +39,12 @@ class HintAdapter:
         hint = self.core.request_hint()
         if hint:
             r, c, v = hint
+            # Update UI
             self.ui.set_cell_value(r, c, v)
         self._update_button()
         return True
 
     def _on_core_change(self, r, c, v):
+        # core notified of change; update UI cell and button state
         self.ui.set_cell_value(r, c, v)
         self._update_button()
