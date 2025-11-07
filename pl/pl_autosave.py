@@ -1,10 +1,10 @@
-# pl/pl_autosave.py
+                   
 def deserialize(data: dict) -> dict:
     """
     Normalize legacy save shapes into canonical payload.
     Ensures integers in puzzle and presence of cell_types.
     """
-    payload = dict(data)  # shallow copy
+    payload = dict(data)                
     if 'puzzle' in payload:
         new_puzzle = []
         for row in payload['puzzle']:
@@ -28,7 +28,7 @@ def deserialize(data: dict) -> dict:
     return payload
 
 def serialize(core_game, timer, difficulty: str, validation_mode: str, cell_types):
-    # Optional helper; kept for completeness
+                                            
     return {
         'puzzle': core_game.to_dict()['puzzle'],
         'solution': core_game.to_dict()['solution'],

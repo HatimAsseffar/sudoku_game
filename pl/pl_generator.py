@@ -1,4 +1,4 @@
-# pl/pl_generator.py
+                    
 import random
 from typing import List, Tuple, Optional
 
@@ -65,7 +65,7 @@ class SudokuGenerator:
         """
         for attempt in range(max_attempts):
             self.reset_grid()
-            # Seed diagonal boxes only: (0,0), (3,3), (6,6)
+                                                           
             for box_start in (0, 3, 6):
                 nums = list(range(1, 10))
                 random.shuffle(nums)
@@ -75,27 +75,27 @@ class SudokuGenerator:
                         self.grid[box_start + i][box_start + j] = nums[idx]
                         idx += 1
 
-            # Attempt to solve (solver may overwrite seeded values where needed)
+                                                                                
             if self.solve():
-                # solver filled self.grid with a valid full solution
+                                                                    
                 self.solution = [row.copy() for row in self.grid]
                 return
 
-        # If we reach here, generation failed repeatedly; raise to surface the problem
+                                                                                      
         raise RuntimeError("SudokuGenerator: failed to generate a full valid grid after retries")
 
     def create_puzzle(self, holes: int = 10) -> List[List[int]]:
         """Copy solved solution to puzzle and remove `holes` random cells (set them to 0)."""
         if self.solution is None:
-            # Ensure solution exists (call generate_full_grid if needed)
+                                                                        
             self.generate_full_grid()
-        # Start from a fresh copy of the solved grid
+                                                    
         puzzle = [row.copy() for row in self.solution]
         all_cells = [(r, c) for r in range(9) for c in range(9)]
         cells_to_clear = random.sample(all_cells, min(len(all_cells), max(0, holes)))
         for r, c in cells_to_clear:
             puzzle[r][c] = 0
-        # Keep internal grid representing the puzzle for any subsequent calls
+                                                                             
         self.grid = [row.copy() for row in puzzle]
         return [row.copy() for row in self.grid]
 

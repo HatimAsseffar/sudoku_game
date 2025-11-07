@@ -20,3 +20,6 @@ class GameBoard:
     def empty_cells(self):
         """Return list of (row, col) for empty cells."""
         return [(r, c) for r in range(9) for c in range(9) if self.puzzle[r][c] == 0]
+
+    def _none(self):
+        return

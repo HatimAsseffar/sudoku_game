@@ -1,4 +1,4 @@
-# pl_timer.py
+             
 class GameTimer:
     def __init__(self, initial_seconds: int = 0):
         self._seconds = initial_seconds

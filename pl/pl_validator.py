@@ -1,4 +1,4 @@
-# pl_validator.py
+                 
 from typing import Callable, List, Tuple
 
 BoardGetter = Callable[[int,int], int]
