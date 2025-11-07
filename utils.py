@@ -2,7 +2,7 @@ def clear_window(self):
     for widget in self.root.winfo_children():
         widget.destroy()
 
-# utils.py
+          
 
 def get_ui_styles(validate_callback=None, hint_callback=None,
                   new_game_callback=None, menu_callback=None,
